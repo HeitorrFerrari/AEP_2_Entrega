@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(claude plugin *)",
+      "Bash(gh api *)",
+      "WebFetch(domain:raw.githubusercontent.com)"
+    ]
+  }
+}
