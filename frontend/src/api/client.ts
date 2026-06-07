@@ -6,8 +6,11 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     ...init,
   })
   if (!res.ok) {
-    const err = await res.json().catch(() => ({ detalhe: res.statusText }))
-    throw new Error(err.detalhe ?? err.message ?? 'Erro desconhecido')
+    const err = await res.json().catch(() => ({}))
+    const msg = err.mensagem ?? err.message ?? `Erro ${res.status}`
+    const detalhes: string[] = Array.isArray(err.detalhes) && err.detalhes.length > 0 ? err.detalhes : []
+    const full = detalhes.length > 0 ? `${msg}: ${detalhes.join(', ')}` : msg
+    throw new Error(full)
   }
   if (res.status === 204) return undefined as T
   return res.json()

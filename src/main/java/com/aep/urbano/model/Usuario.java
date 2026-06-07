@@ -28,6 +28,15 @@ public class Usuario {
     @Column(nullable = false, unique = true)
     private String documento;
 
+    @Column
+    private String telefone;
+
+    @Column
+    private String email;
+
+    @Column
+    private String endereco;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Cargo cargo;

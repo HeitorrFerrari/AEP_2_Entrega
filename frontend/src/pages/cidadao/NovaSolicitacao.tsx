@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useLocation } from 'react-router-dom'
 import { CheckCircle } from 'lucide-react'
 import { solicitacoesApi } from '../../api/solicitacoes'
 import { categoriasApi } from '../../api/categorias'
@@ -35,9 +36,18 @@ const prioridadeSelected: Record<Prioridade, string> = {
 
 export function NovaSolicitacao() {
   const queryClient = useQueryClient()
+  const location = useLocation()
+  const isRotaAnonima = location.pathname.startsWith('/anonimo')
+
+  const { user } = useAuth()
+  const isLoggedAsCidadao = user?.cargo === 'CIDADAO'
+
+  const initialForm: Partial<SolicitacaoRequest> = isRotaAnonima
+    ? { tipoIdentificacao: 'ANONIMO' }
+    : {}
 
   const [step, setStep] = useState<Step>('categoria')
-  const [form, setForm] = useState<Partial<SolicitacaoRequest>>({})
+  const [form, setForm] = useState<Partial<SolicitacaoRequest>>(initialForm)
   const [descricao, setDescricao] = useState('')
   const [localizacao, setLocalizacao] = useState('')
   const [cidadaoId, setCidadaoId] = useState<number | null>(null)
@@ -45,9 +55,6 @@ export function NovaSolicitacao() {
   const [prazoAlvo, setPrazoAlvo] = useState('')
   const [descricaoError, setDescricaoError] = useState('')
   const [localizacaoError, setLocalizacaoError] = useState('')
-
-  const { user } = useAuth()
-  const isLoggedAsCidadao = user?.cargo === 'CIDADAO'
 
   const { data: categorias = [] } = useQuery({ queryKey: ['categorias'], queryFn: categoriasApi.listar })
   const { data: usuarios = [] } = useQuery({
@@ -119,7 +126,7 @@ export function NovaSolicitacao() {
 
   const resetForm = () => {
     setStep('categoria')
-    setForm({})
+    setForm(initialForm)
     setDescricao('')
     setLocalizacao('')
     setCidadaoId(null)
@@ -194,7 +201,7 @@ export function NovaSolicitacao() {
                     return (
                       <button
                         key={p}
-                        onClick={() => { setForm(f => ({ ...f, prioridade: p })); setStep('identificacao') }}
+                        onClick={() => { setForm(f => ({ ...f, prioridade: p })); setStep(isRotaAnonima ? 'descricao' : 'identificacao') }}
                         className={`text-left p-4 rounded-lg border-2 transition-all ${isSelected ? prioridadeSelected[p] : prioridadeBorder[p] + ' bg-white'}`}
                       >
                         <p className="font-semibold text-slate-900 text-sm">{info.label}</p>
@@ -255,7 +262,7 @@ export function NovaSolicitacao() {
                 {descricaoError && <p className="text-xs text-red-500">{descricaoError}</p>}
                 <div className="flex gap-3">
                   <Button onClick={handleDescricaoNext}>Continuar</Button>
-                  <button onClick={() => setStep('identificacao')} className="text-xs text-slate-400 hover:text-slate-600 self-center">← Voltar</button>
+                  <button onClick={() => setStep(isRotaAnonima ? 'prioridade' : 'identificacao')} className="text-xs text-slate-400 hover:text-slate-600 self-center">← Voltar</button>
                 </div>
               </div>
             )}

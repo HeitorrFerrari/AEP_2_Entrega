@@ -109,8 +109,9 @@ public class DenunciaServiceImpl implements DenunciaService {
         CategoriaResponse catResp = categoriaService.toResponse(d.getCategoria());
         UsuarioResponse denuncianteResp = d.getDenunciante() == null ? null :
                 new UsuarioResponse(d.getDenunciante().getId(), d.getDenunciante().getNome(),
-                        d.getDenunciante().getDocumento(), d.getDenunciante().getCargo(),
-                        d.getDenunciante().getCriadoEm());
+                        d.getDenunciante().getDocumento(), d.getDenunciante().getTelefone(),
+                        d.getDenunciante().getEmail(), d.getDenunciante().getEndereco(),
+                        d.getDenunciante().getCargo(), d.getDenunciante().getCriadoEm());
 
         return new DenunciaResponse(
                 d.getId(), d.getProtocolo(), catResp,

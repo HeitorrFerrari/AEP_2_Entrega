@@ -7,6 +7,7 @@ import { AtendentLayout } from './components/AtendentLayout'
 
 import { Home } from './pages/Home'
 import { Login } from './pages/Login'
+import { AnonimoLayout } from './components/AnonimoLayout'
 
 import { NovaSolicitacao } from './pages/cidadao/NovaSolicitacao'
 import { AcompanharProtocolo } from './pages/cidadao/AcompanharProtocolo'
@@ -40,12 +41,16 @@ export default function App() {
             path="atendente"
             element={<ProtectedRoute requiredCargo="FUNCIONARIO_PUBLICO" layout={<AtendentLayout />} />}
           >
-            <Route index element={<Navigate to="solicitacoes" replace />} />
+            <Route index element={<Navigate to="dashboard" replace />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="solicitacoes" element={<Solicitacoes />} />
             <Route path="solicitacoes/:id" element={<SolicitacaoDetalhe />} />
             <Route path="denuncias" element={<Denuncias />} />
             <Route path="usuarios" element={<Usuarios />} />
+          </Route>
+
+          <Route path="anonimo" element={<AnonimoLayout />}>
+            <Route path="nova" element={<NovaSolicitacao />} />
           </Route>
         </Routes>
       </BrowserRouter>

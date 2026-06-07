@@ -79,7 +79,7 @@ public class SolicitacaoServiceImpl implements SolicitacaoService {
     public List<SolicitacaoResponse> listarPorCidadao(Long cidadaoId) {
         return solicitacaoRepository.findByCidadaoId(cidadaoId).stream()
                 .sorted(Comparator.comparingInt((Solicitacao s) -> -s.getPrioridade().getPeso())
-                        .thenComparing(Solicitacao::getCriadoEm).reversed())
+                        .thenComparing(Comparator.comparing(Solicitacao::getCriadoEm).reversed()))
                 .map(this::toResponse)
                 .toList();
     }
@@ -181,8 +181,9 @@ public class SolicitacaoServiceImpl implements SolicitacaoService {
 
         UsuarioResponse cidadaoResp = s.getCidadao() == null ? null :
                 new UsuarioResponse(s.getCidadao().getId(), s.getCidadao().getNome(),
-                        s.getCidadao().getDocumento(), s.getCidadao().getCargo(),
-                        s.getCidadao().getCriadoEm());
+                        s.getCidadao().getDocumento(), s.getCidadao().getTelefone(),
+                        s.getCidadao().getEmail(), s.getCidadao().getEndereco(),
+                        s.getCidadao().getCargo(), s.getCidadao().getCriadoEm());
 
         CategoriaResponse catResp = categoriaService.toResponse(s.getCategoria());
 

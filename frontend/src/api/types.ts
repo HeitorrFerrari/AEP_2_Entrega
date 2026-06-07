@@ -8,6 +8,9 @@ export interface UsuarioResponse {
   id: number
   nome: string
   documento: string
+  telefone?: string
+  email?: string
+  endereco?: string
   cargo: Cargo
   criadoEm: string
 }
@@ -91,5 +94,8 @@ export interface AtualizarStatusRequest {
 export interface UsuarioRequest {
   nome: string
   documento: string
+  telefone?: string
+  email?: string
+  endereco?: string
   cargo: Cargo
 }

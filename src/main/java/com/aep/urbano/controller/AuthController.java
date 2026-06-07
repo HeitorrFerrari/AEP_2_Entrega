@@ -30,6 +30,9 @@ public class AuthController {
                 usuario.getId(),
                 usuario.getNome(),
                 usuario.getDocumento(),
+                usuario.getTelefone(),
+                usuario.getEmail(),
+                usuario.getEndereco(),
                 usuario.getCargo(),
                 usuario.getCriadoEm()
         ));

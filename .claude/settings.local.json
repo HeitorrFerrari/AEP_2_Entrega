@@ -3,7 +3,12 @@
     "allow": [
       "Bash(claude plugin *)",
       "Bash(gh api *)",
-      "WebFetch(domain:raw.githubusercontent.com)"
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(mvn compile *)",
+      "PowerShell(npm *)",
+      "PowerShell(cd \"C:\\\\Users\\\\joaop\\\\Downloads\\\\AEP_2_Entrega\\\\frontend\"; Get-Content package.json | ConvertFrom-Json | ForEach-Object { $_.dependencies; $_.devDependencies })",
+      "PowerShell(Get-ChildItem *)",
+      "Bash(git clone *)"
     ]
   }
 }

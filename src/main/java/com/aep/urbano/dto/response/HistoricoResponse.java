@@ -8,6 +8,6 @@ public record HistoricoResponse(
         Long id,
         StatusSolicitacao status,
         LocalDateTime dataMovimentacao,
-        String responsavelNome,
+        String nomeResponsavel,
         String comentario
 ) {}

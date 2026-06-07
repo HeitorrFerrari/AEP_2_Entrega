@@ -81,8 +81,9 @@ public class AtendimentoServiceImpl implements AtendimentoService {
     private AtendimentoResponse toResponse(Atendimento a) {
         UsuarioResponse atendenteResp = new UsuarioResponse(
                 a.getAtendente().getId(), a.getAtendente().getNome(),
-                a.getAtendente().getDocumento(), a.getAtendente().getCargo(),
-                a.getAtendente().getCriadoEm());
+                a.getAtendente().getDocumento(), a.getAtendente().getTelefone(),
+                a.getAtendente().getEmail(), a.getAtendente().getEndereco(),
+                a.getAtendente().getCargo(), a.getAtendente().getCriadoEm());
 
         return new AtendimentoResponse(
                 a.getId(),

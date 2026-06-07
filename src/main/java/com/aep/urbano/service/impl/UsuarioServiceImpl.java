@@ -36,11 +36,14 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Transactional
     public UsuarioResponse criar(UsuarioRequest request) {
         if (usuarioRepository.existsByDocumento(request.documento())) {
-            throw new BusinessException("Já existe um usuário com o documento: " + request.documento());
+            throw new BusinessException("Documento já cadastrado.");
         }
         Usuario usuario = Usuario.builder()
                 .nome(request.nome().strip())
                 .documento(request.documento().strip())
+                .telefone(request.telefone())
+                .email(request.email())
+                .endereco(request.endereco())
                 .cargo(request.cargo())
                 .build();
         return toResponse(usuarioRepository.save(usuario));
@@ -56,6 +59,9 @@ public class UsuarioServiceImpl implements UsuarioService {
         }
         usuario.setNome(request.nome().strip());
         usuario.setDocumento(request.documento().strip());
+        usuario.setTelefone(request.telefone());
+        usuario.setEmail(request.email());
+        usuario.setEndereco(request.endereco());
         usuario.setCargo(request.cargo());
         return toResponse(usuarioRepository.save(usuario));
     }
@@ -74,6 +80,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     private UsuarioResponse toResponse(Usuario u) {
-        return new UsuarioResponse(u.getId(), u.getNome(), u.getDocumento(), u.getCargo(), u.getCriadoEm());
+        return new UsuarioResponse(u.getId(), u.getNome(), u.getDocumento(),
+                u.getTelefone(), u.getEmail(), u.getEndereco(), u.getCargo(), u.getCriadoEm());
     }
 }

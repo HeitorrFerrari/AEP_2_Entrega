@@ -7,5 +7,8 @@ import jakarta.validation.constraints.NotNull;
 public record UsuarioRequest(
         @NotBlank String nome,
         @NotBlank String documento,
+        String telefone,
+        String email,
+        String endereco,
         @NotNull Cargo cargo
 ) {}

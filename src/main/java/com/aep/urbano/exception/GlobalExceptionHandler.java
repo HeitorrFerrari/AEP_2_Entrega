@@ -7,6 +7,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -51,6 +52,18 @@ public class GlobalExceptionHandler {
                         "Corrija os campos informados",
                         LocalDateTime.now(),
                         detalhes
+                ));
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ErroResponse> handleNoResource(NoResourceFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErroResponse(
+                        HttpStatus.NOT_FOUND.value(),
+                        "Endpoint não encontrado",
+                        ex.getMessage(),
+                        LocalDateTime.now(),
+                        List.of()
                 ));
     }
 

@@ -16,6 +16,17 @@ const areaConfig: Record<Area, { label: string; icon: typeof User; redirect: str
   FUNCIONARIO_PUBLICO: { label: 'Atendente / Gestor', icon: Briefcase, redirect: '/atendente' },
 }
 
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <label className="block text-xs font-medium text-slate-500 mb-1.5">{label}</label>
+      {children}
+    </div>
+  )
+}
+
+const inputCls = 'w-full text-sm border border-slate-200 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-300'
+
 export function Login() {
   const navigate = useNavigate()
   const { login } = useAuth()
@@ -24,6 +35,9 @@ export function Login() {
   const [area, setArea] = useState<Area | null>(null)
   const [documento, setDocumento] = useState('')
   const [nome, setNome] = useState('')
+  const [telefone, setTelefone] = useState('')
+  const [email, setEmail] = useState('')
+  const [endereco, setEndereco] = useState('')
 
   const loginMutation = useMutation({
     mutationFn: () => authApi.login(documento),
@@ -40,7 +54,14 @@ export function Login() {
   })
 
   const cadastroMutation = useMutation({
-    mutationFn: () => usuariosApi.criar({ nome: nome.trim(), documento: documento.trim(), cargo: area! as Cargo }),
+    mutationFn: () => usuariosApi.criar({
+      nome: nome.trim(),
+      documento: documento.trim(),
+      telefone: telefone.trim() || undefined,
+      email: email.trim() || undefined,
+      endereco: endereco.trim() || undefined,
+      cargo: area! as Cargo,
+    }),
     onSuccess: (user) => {
       login(user)
       navigate(areaConfig[area!].redirect)
@@ -65,21 +86,23 @@ export function Login() {
     cadastroMutation.reset()
     setDocumento('')
     setNome('')
+    setTelefone('')
+    setEmail('')
+    setEndereco('')
   }
 
   const isPending = loginMutation.isPending || cadastroMutation.isPending
   const error = loginMutation.error || cadastroMutation.error
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center">
-      <div className="w-full max-w-sm">
+    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center py-10">
+      <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-slate-900">Solicitações Urbanas</h1>
           <p className="text-slate-500 mt-1 text-sm">Acesse ou crie sua conta</p>
         </div>
 
         <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-          {/* Tabs */}
           <div className="flex border-b border-slate-200">
             {(['login', 'cadastro'] as Tab[]).map(t => (
               <button
@@ -94,7 +117,6 @@ export function Login() {
           </div>
 
           <div className="p-6 space-y-5">
-            {/* Seleção de perfil */}
             <div>
               <p className="text-xs font-medium text-slate-500 mb-2">Perfil</p>
               <div className="grid grid-cols-2 gap-2">
@@ -120,21 +142,18 @@ export function Login() {
 
             {tab === 'login' ? (
               <form onSubmit={handleLogin} className="space-y-4">
-                <div>
-                  <label className="block text-xs font-medium text-slate-500 mb-1.5">CPF / Documento</label>
+                <Field label="CPF / Documento">
                   <input
                     type="text"
                     value={documento}
                     onChange={e => setDocumento(e.target.value)}
                     placeholder="00000000000"
                     maxLength={14}
-                    className="w-full text-sm border border-slate-200 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-300 font-mono"
+                    className={`${inputCls} font-mono`}
                   />
-                </div>
+                </Field>
 
-                {error && (
-                  <p className="text-xs text-red-500">Documento não encontrado. Verifique ou cadastre-se.</p>
-                )}
+                {error && <p className="text-xs text-red-500">{(error as Error).message}</p>}
 
                 <Button type="submit" className="w-full justify-center" disabled={!area || !documento.trim() || isPending}>
                   {isPending ? 'Verificando...' : 'Entrar'}
@@ -142,40 +161,97 @@ export function Login() {
               </form>
             ) : (
               <form onSubmit={handleCadastro} className="space-y-4">
-                <div>
-                  <label className="block text-xs font-medium text-slate-500 mb-1.5">Nome completo</label>
-                  <input
-                    type="text"
-                    value={nome}
-                    onChange={e => setNome(e.target.value)}
-                    placeholder="Seu nome"
-                    className="w-full text-sm border border-slate-200 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-300"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-slate-500 mb-1.5">CPF / Documento</label>
-                  <input
-                    type="text"
-                    value={documento}
-                    onChange={e => setDocumento(e.target.value)}
-                    placeholder="00000000000"
-                    maxLength={14}
-                    className="w-full text-sm border border-slate-200 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-300 font-mono"
-                  />
+                <div className="grid grid-cols-1 gap-4">
+                  <Field label="Nome completo *">
+                    <input
+                      type="text"
+                      value={nome}
+                      onChange={e => setNome(e.target.value)}
+                      placeholder="Seu nome completo"
+                      className={inputCls}
+                    />
+                  </Field>
+
+                  <Field label="CPF / Documento *">
+                    <input
+                      type="text"
+                      value={documento}
+                      onChange={e => setDocumento(e.target.value)}
+                      placeholder="00000000000"
+                      maxLength={14}
+                      className={`${inputCls} font-mono`}
+                    />
+                  </Field>
+
+                  {area === 'CIDADAO' && (
+                    <>
+                      <Field label="Telefone">
+                        <input
+                          type="tel"
+                          value={telefone}
+                          onChange={e => setTelefone(e.target.value)}
+                          placeholder="(11) 99999-9999"
+                          className={inputCls}
+                        />
+                      </Field>
+
+                      <Field label="E-mail">
+                        <input
+                          type="email"
+                          value={email}
+                          onChange={e => setEmail(e.target.value)}
+                          placeholder="seu@email.com"
+                          className={inputCls}
+                        />
+                      </Field>
+
+                      <Field label="Endereço">
+                        <input
+                          type="text"
+                          value={endereco}
+                          onChange={e => setEndereco(e.target.value)}
+                          placeholder="Rua, número, bairro"
+                          className={inputCls}
+                        />
+                      </Field>
+                    </>
+                  )}
                 </div>
 
                 {error && (
-                  <p className="text-xs text-red-500">
-                    {(error as Error).message || 'Erro ao cadastrar.'}
-                  </p>
+                  <div className="space-y-1.5">
+                    <p className="text-xs text-red-500">{(error as Error).message}</p>
+                    {(error as Error).message.toLowerCase().includes('já cadastrado') && (
+                      <button
+                        type="button"
+                        onClick={() => switchTab('login')}
+                        className="text-xs text-blue-600 hover:underline"
+                      >
+                        Documento já tem conta. Clique aqui para entrar →
+                      </button>
+                    )}
+                  </div>
                 )}
 
-                <Button type="submit" className="w-full justify-center" disabled={!area || !documento.trim() || !nome.trim() || isPending}>
+                <Button
+                  type="submit"
+                  className="w-full justify-center"
+                  disabled={!area || !documento.trim() || !nome.trim() || isPending}
+                >
                   {isPending ? 'Cadastrando...' : 'Criar conta'}
                 </Button>
               </form>
             )}
           </div>
+        </div>
+
+        <div className="text-center mt-4">
+          <button
+            onClick={() => navigate('/anonimo/nova')}
+            className="text-xs text-slate-400 hover:text-slate-600 underline underline-offset-2 transition-colors"
+          >
+            Registrar ocorrência sem conta (anônimo)
+          </button>
         </div>
       </div>
     </div>
