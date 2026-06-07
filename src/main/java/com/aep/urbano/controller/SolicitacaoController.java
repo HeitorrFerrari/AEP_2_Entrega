@@ -44,6 +44,12 @@ public class SolicitacaoController {
         return ResponseEntity.ok(solicitacaoService.buscarPorProtocolo(protocolo));
     }
 
+    @GetMapping("/cidadao/{cidadaoId}")
+    @Operation(summary = "Listar solicitações de um cidadão")
+    public ResponseEntity<List<SolicitacaoResponse>> listarPorCidadao(@PathVariable Long cidadaoId) {
+        return ResponseEntity.ok(solicitacaoService.listarPorCidadao(cidadaoId));
+    }
+
     @GetMapping("/atrasadas")
     @Operation(summary = "Listar solicitações atrasadas")
     public ResponseEntity<List<SolicitacaoResponse>> listarAtrasadas() {
