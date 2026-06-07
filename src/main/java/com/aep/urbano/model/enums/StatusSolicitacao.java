@@ -1,6 +1,8 @@
 package com.aep.urbano.model.enums;
 
+import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 
 public enum StatusSolicitacao {
@@ -44,5 +46,9 @@ public enum StatusSolicitacao {
 
     public boolean isFinal() {
         return this == RESOLVIDO || this == ENCERRADO;
+    }
+
+    public static List<StatusSolicitacao> statusFinais() {
+        return Arrays.stream(values()).filter(StatusSolicitacao::isFinal).toList();
     }
 }

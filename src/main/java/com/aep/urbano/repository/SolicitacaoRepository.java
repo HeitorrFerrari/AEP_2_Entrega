@@ -19,6 +19,8 @@ public interface SolicitacaoRepository extends JpaRepository<Solicitacao, Long> 
 
     Optional<Solicitacao> findByProtocolo(String protocolo);
 
+    List<Solicitacao> findByCidadaoId(Long cidadaoId);
+
     List<Solicitacao> findByPrioridade(Prioridade prioridade);
 
     List<Solicitacao> findByCategoriaTipoCategoria(TipoCategoria tipoCategoria);
@@ -35,8 +37,15 @@ public interface SolicitacaoRepository extends JpaRepository<Solicitacao, Long> 
     @Query("SELECT s.categoria.tipoCategoria, COUNT(s) FROM Solicitacao s GROUP BY s.categoria.tipoCategoria ORDER BY COUNT(s) DESC")
     List<Object[]> countGroupedByCategoria();
 
+    List<Solicitacao> findByStatusNotIn(List<StatusSolicitacao> statusList);
+
     @Query("SELECT s FROM Solicitacao s WHERE s.prazoAlvo < :hoje AND s.status NOT IN :statusFinais")
     List<Solicitacao> findAtrasadas(
+            @Param("hoje") LocalDate hoje,
+            @Param("statusFinais") List<StatusSolicitacao> statusFinais);
+
+    @Query("SELECT COUNT(s) FROM Solicitacao s WHERE s.prazoAlvo < :hoje AND s.status NOT IN :statusFinais")
+    long countAtrasadas(
             @Param("hoje") LocalDate hoje,
             @Param("statusFinais") List<StatusSolicitacao> statusFinais);
 }
